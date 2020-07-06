@@ -12,9 +12,10 @@ class ViewController: UIViewController {
     let count = 10
     let scrollView = UIScrollView()
     var label : UILabel?
-    var subView : UIView?
+    var label_frame = CGRect.zero
     override func viewDidLoad() {
         super.viewDidLoad()
+        //
         if #available(iOS 11.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         }else{
@@ -30,20 +31,20 @@ class ViewController: UIViewController {
         scrollView.delegate = self
         
         for i in 0..<count {
-            let v1 = UIView(frame: .init(x: 0, y: CGFloat(i) * vh, width: width, height: vh))
-            v1.backgroundColor = randcomColor()
-            scrollView.addSubview(v1)
             
-            //添加label
             if i==4 {
-                subView = v1
-                let label = UILabel(frame: v1.bounds)
+                let label = UILabel(frame: .init(x: 0, y: CGFloat(i) * vh, width: width, height: vh))
                 label.textAlignment = .center
                 label.font = .systemFont(ofSize: 18)
                 label.text = "tommy"
                 label.backgroundColor = randcomColor()
+                scrollView.addSubview(label)
                 self.label = label
-                v1.addSubview(label)
+                label_frame = label.frame
+            }else{
+                let v1 = UIView(frame: .init(x: 0, y: CGFloat(i) * vh, width: width, height: vh))
+                v1.backgroundColor = randcomColor()
+                scrollView.addSubview(v1)
             }
             
         }
@@ -70,18 +71,24 @@ class ViewController: UIViewController {
 }
 extension ViewController : UIScrollViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let v1 = subView!
-        let transPoint = scrollView.convert(v1.frame.origin, to: view)
-        let y = transPoint.y
-        
-        if y < 0 {
-            label?.frame.origin = .init(x: 0, y: 0)
-            view.addSubview(self.label!)
-        }else{
+        let superView = (self.label?.superview)!
+        if superView.isEqual(scrollView) {//label父视图=scrollView
+            let transPoint = scrollView.convert(self.label!.frame.origin, to: view)
+            let y = transPoint.y
             
-//            let scroll_point = view.convert(CGPoint.zero, to: scrollView)
-            label?.frame.origin = .init(x: 0, y: 0)
-            v1.addSubview(self.label!)
+            if y < 0 {
+                label?.frame.origin = .init(x: 0, y: 0)
+                view.addSubview(self.label!)
+            }else{}
+        }else{
+            let ty = scrollView.convert(label_frame.origin, to: view).y
+            let labelYInView = ty
+            if labelYInView < 0 {
+            }else{
+                label!.frame.origin.y = 4 * 200
+                scrollView.addSubview(self.label!)
+            }
+            
         }
     }
 }
