@@ -71,24 +71,16 @@ class ViewController: UIViewController {
 }
 extension ViewController : UIScrollViewDelegate{
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        let superView = (self.label?.superview)!
-        if superView.isEqual(scrollView) {//label父视图=scrollView
-            let transPoint = scrollView.convert(self.label!.frame.origin, to: view)
-            let y = transPoint.y
-            
-            if y < 0 {
-                label?.frame.origin = .init(x: 0, y: 0)
-                view.addSubview(self.label!)
-            }else{}
+        let transPoint = scrollView.convert(self.label_frame.origin, to: view)
+        let y = transPoint.y
+        
+        if y < 0 {
+            label?.frame.origin = .init(x: 0, y: 0)
+            view.addSubview(self.label!)
         }else{
-            let ty = scrollView.convert(label_frame.origin, to: view).y
-            let labelYInView = ty
-            if labelYInView < 0 {
-            }else{
-                label!.frame.origin.y = 4 * 200
-                scrollView.addSubview(self.label!)
-            }
-            
+            label!.frame.origin.y = 4 * 200//or = self.label_frame;
+            scrollView.addSubview(self.label!)
         }
+        
     }
 }
